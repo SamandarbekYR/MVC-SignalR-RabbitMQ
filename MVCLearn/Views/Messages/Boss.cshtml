@@ -1,0 +1,113 @@
+﻿@model List<MVCLearn.Models.User>
+@{
+    ViewData["Title"] = "Boss Page";
+}
+
+<div class="container mt-5">
+    <div class="row mb-4">
+        <div class="col-md-12 text-center">
+            <label class="display-4" style="font-size: 38px;">Send Message to Worker</label>
+        </div>
+    </div>
+
+    <!-- Message Input -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="messageInput" class="h5">Message:</label>
+                <textarea id="messageInput" class="form-control form-control-lg" rows="4" placeholder="Type your message here..."></textarea>
+            </div>
+        </div>
+    </div>
+
+    <!-- Users Table -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <table class="table table-striped table-hover table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col"><input type="checkbox" id="selectAllCheckbox" /></th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+                            <td><input type="checkbox" class="userCheckbox" data-id="@user.Id" data-email="@user.Gmail" /></td>
+                            <td>@user.Name</td>
+                            <td>@user.Gmail</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="row">
+        <div class="col-md-6">
+            <button id="sendMessageButton" class="btn btn-primary btn-lg btn-block">Send Message</button>
+        </div>
+        <div class="col-md-6">
+            <a href="@Url.Action("SentMessages", "Messages")" class="btn btn-info btn-lg btn-block">View Sent Messages</a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.9/signalr.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // Initialize SignalR connection
+            var connection = new signalR.HubConnectionBuilder().withUrl("/notificationHub").build();
+
+            // Start the SignalR connection
+            connection.start().catch(function (err) {
+                return console.error(err.toString());
+            });
+
+            // Select all checkboxes
+            $('#selectAllCheckbox').click(function () {
+                $('.userCheckbox').prop('checked', this.checked);
+            });
+
+            // Send message button click event
+            $('#sendMessageButton').click(function () {
+                var selectedUsers = [];
+                $('.userCheckbox:checked').each(function () {
+                    selectedUsers.push({
+                        Id: $(this).data('id'),
+                        Email: $(this).data('email')
+                    });
+                });
+
+                var message = $('#messageInput').val();
+
+                if (selectedUsers.length === 0 || message === '') {
+                    alert('Please select at least one user and enter a message.');
+                    return;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("SendMessage", "Messages")',
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        messageBody: message,
+                        users: selectedUsers
+                    }),
+                    success: function () {
+                        alert('Message sent successfully!');
+                        $('#messageInput').val('');
+                        $('.userCheckbox').prop('checked', false);
+                    },
+                    error: function () {
+                        alert('An error occurred while sending the message.');
+                    }
+                });
+            });
+        });
+    </script>
+}

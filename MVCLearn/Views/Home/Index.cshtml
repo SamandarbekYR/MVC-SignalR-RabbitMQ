@@ -1,0 +1,61 @@
+﻿@model List<MVCLearn.Models.User>
+
+@{
+    ViewData["Title"] = "User List";
+}
+
+<div class="container mt-4">
+    <h2>@ViewData["Title"]</h2>
+
+    <!-- Xabar kiritish inputi -->
+    <div class="mb-3">
+        <input type="text" id="messageInput" class="form-control" placeholder="Xabarni kiriting">
+    </div>
+
+    <!-- Userlar jadvali -->
+    <form asp-action="SendMessage" method="post" id="userForm">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Select</th>
+                    <th>Name</th>
+                    <th>Gmail</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" name="userIds" value="@user.Id" />
+                        </td>
+                        <td>@user.Name</td>
+                        <td>@user.Gmail</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <!-- Xabar yuborish tugmasi -->
+        <button type="submit" class="btn btn-primary" onclick="submitForm()">Send Message</button>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        function submitForm() {
+            // Xabarni inputdan olish
+            var message = document.getElementById('messageInput').value;
+
+            // Xabar inputiga skritni qo'shish
+            var form = document.getElementById('userForm');
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'message';
+            input.value = message;
+            form.appendChild(input);
+
+            form.submit();
+        }
+    </script>
+}
