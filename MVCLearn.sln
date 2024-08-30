@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVCLearn", "MVCLearn\MVCLearn.csproj", "{BFF67831-528D-442B-84BB-1F58A5DEAC1E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVCLearn", "MVCLearn\MVCLearn.csproj", "{BFF67831-528D-442B-84BB-1F58A5DEAC1E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReceiverApp.WebApi", "ReceiverApp.WebApi\ReceiverApp.WebApi.csproj", "{6FCA4C71-F242-466D-8B64-422A59231AD4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{BFF67831-528D-442B-84BB-1F58A5DEAC1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BFF67831-528D-442B-84BB-1F58A5DEAC1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BFF67831-528D-442B-84BB-1F58A5DEAC1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FCA4C71-F242-466D-8B64-422A59231AD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FCA4C71-F242-466D-8B64-422A59231AD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FCA4C71-F242-466D-8B64-422A59231AD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FCA4C71-F242-466D-8B64-422A59231AD4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
