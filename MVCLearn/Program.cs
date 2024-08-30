@@ -8,19 +8,20 @@ using MVCLearn.DataAcess.Repositories.Users;
 using MVCLearn.DataAcess.Repositories.UsersMessages;
 using MVCLearn.Hubs;
 using MVCLearn.Interfaces.Messages;
+using MVCLearn.Interfaces.RabbitMQ;
 using MVCLearn.Models;
 using MVCLearn.Services.Messages;
+using MVCLearn.Services.RabbitMQ;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.Configure<SMTPSettings>(builder.Configuration.GetSection("Smtp"));
-builder.Services.AddSingleton<IEmailSenderService, EmailSenderService>();
 builder.Services.AddCustomDbContext(builder.Configuration);
 builder.Services.AddTransient<IUserRepository, UsersRepository>();
 builder.Services.AddTransient<IMessageRepository, MessageRepository>();
 builder.Services.AddTransient<IUsersMessagesRepository, UsersMessagesRepository>();
+builder.Services.AddTransient<IRabbitMQProducerService, RabbitMQProducerService>();
 builder.Services.AddCustomControllers();
 builder.Services.AddSignalR();
 builder.Services.AddSignalR().AddHubOptions<NotificationHub>(options =>
