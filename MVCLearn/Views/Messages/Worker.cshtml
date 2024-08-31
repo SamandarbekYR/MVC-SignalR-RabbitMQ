@@ -1,13 +1,19 @@
 ﻿@model List<MVCLearn.Models.UserMessage>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!-- Bootstrap CSS -->
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Bootstrap JavaScript -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- SignalR JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.min.js"></script>
 
 <!-- Navbarda xabarlar sonini ko'rsatish -->
 <button id="notificationBell" class="btn btn-primary">
     🔔 Notifications <span id="notificationCount">0</span>
 </button>
-
 
 <div id="notificationsModal" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
@@ -43,74 +49,19 @@
         </div>
     </div>
 </div>
-<!-- jQuery -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!-- Bootstrap JavaScript -->
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<!-- Bootstrap CSS -->
-<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 
+<script src="~/js/worker-signalr.js"></script>
 
-@section Scripts {
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
-    <script type="text/javascript">
-        $(document).ready(function () {
-            // SignalR bog'lanishini boshlash
-            var connection = new signalR.HubConnectionBuilder().withUrl("/notificationHub").build();
-
-            // Xabar qabul qilish uchun hodisani sozlash
-            connection.on("ReceiveMessage", function (message, date) {
-                // Modalga xabar qo'shish
-                var tableRow = '<tr><td>' + new Date(date).toLocaleString() + '</td><td>' + message + '</td></tr>';
-                $("#notificationsTable").append(tableRow);
-
-                // Navbar'da xabarni ko'rsatish
-                var notificationCount = $("#notificationCount").text();
-                notificationCount = parseInt(notificationCount) || 0;
-                $("#notificationCount").text(notificationCount + 1);
-
-                // Modal oynasini ko'rsatish
-                $("#notificationsModal").modal('show');
-            });
-
-            // SignalR bog'lanishini boshlash
-            connection.start().then(function () {
-                console.log("SignalR bog'lanishi muvaffaqiyatli boshlandi.");
-            }).catch(function (err) {
-                console.error(err.toString());
-            });
-
-            // Qo'ng'iroq tugmasini bosishda modal oynani ko'rsatish va yangilash
-            $("#notificationBell").click(function () {
-                $.ajax({
-                    url: '@Url.Action("GetMessagesForWorker", "Messages")',
-                    type: 'GET',
-                    success: function (data) {
-                        // Modalni tozalash
-                        $("#notificationsTable").empty();
-
-                        // Yangi xabarlarni qo'shish
-                        data.forEach(function (userMessage) {
-                            var tableRow = '<tr><td>' + new Date(userMessage.message.sendAt).toLocaleString() + '</td><td>' + userMessage.message.content + '</td></tr>';
-                            $("#notificationsTable").append(tableRow);
-                        });
-
-                        // Modal oynasini ko'rsatish
-                        $("#notificationsModal").modal('show');
-                    },
-                    error: function (err) {
-                        console.error(err);
-                    }
-                });
-            });
-
-            // Modal oynani yopish tugmasini boshqarish
-            $(document).on('click', '[data-dismiss="modal"]', function () {
-                $("#notificationsModal").modal('hide');
-            });
+<script>
+    $(document).ready(function () {
+        // Modalni ochish uchun bildirishnoma qo'ng'irog'ini bosish
+        $('#notificationBell').click(function () {
+            $('#notificationsModal').modal('show');
         });
-    </script>
-}
 
-
-
+        // Modalni yopish uchun 'x' yoki 'Close' tugmasi bosilganda
+        $('.close, .btn-secondary').click(function () {
+            $('#notificationsModal').modal('hide');
+        });
+    });
+</script>

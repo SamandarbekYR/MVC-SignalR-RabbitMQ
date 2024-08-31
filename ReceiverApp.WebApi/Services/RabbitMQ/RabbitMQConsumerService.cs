@@ -8,7 +8,6 @@ using MVCLearn.DTOs;
 using Newtonsoft.Json;
 using MVCLearn.Models;
 using MVCLearn.Interfaces.Messages;
-using Microsoft.Extensions.Configuration;
 
 namespace ReceiverApp.WebApi.Services.RabbitMQ
 {
@@ -16,7 +15,6 @@ namespace ReceiverApp.WebApi.Services.RabbitMQ
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly IModel _channel;
-        private readonly IConfigurationSection _config;
         private IConnection _connection;
 
         public RabbitMQConsumerService(IConfiguration config, IServiceProvider serviceProvider)

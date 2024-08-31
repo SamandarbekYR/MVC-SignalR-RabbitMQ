@@ -56,21 +56,15 @@
     </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
+<script src="~/js/signalr.js"></script>
+
 @section Scripts {
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.9/signalr.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
-            // Initialize SignalR connection
-            var connection = new signalR.HubConnectionBuilder().withUrl("/notificationHub").build();
-
-            // Start the SignalR connection
-            connection.start().catch(function (err) {
-                return console.error(err.toString());
-            });
-
-            // Select all checkboxes
-            $('#selectAllCheckbox').click(function () {
-                $('.userCheckbox').prop('checked', this.checked);
+            // Select All functionality
+            $('#selectAllCheckbox').change(function () {
+                $('.userCheckbox').prop('checked', $(this).prop('checked'));
             });
 
             // Send message button click event
@@ -85,23 +79,25 @@
 
                 var message = $('#messageInput').val();
 
-                if (selectedUsers.length === 0 || message === '') {
+                if (selectedUsers.length === 0 || message.trim() === '') {
+                    // Modal yoki alert orqali xabar berish
                     alert('Please select at least one user and enter a message.');
                     return;
                 }
 
                 $.ajax({
                     type: "POST",
-                    url: '@Url.Action("SendMessage", "Messages")',
-                    contentType: "application/json",
+                    url: '@Url.Action("SendMessage", "Messages")',  // URL to send the AJAX request to
+                    contentType: "application/json",  // Set the content type to JSON
                     data: JSON.stringify({
-                        messageBody: message,
-                        users: selectedUsers
+                        messageBody: message,  // The message to send
+                        users: selectedUsers   // The selected users
                     }),
                     success: function () {
                         alert('Message sent successfully!');
                         $('#messageInput').val('');
                         $('.userCheckbox').prop('checked', false);
+                        $('#selectAllCheckbox').prop('checked', false); // "Select All" checkboxini bekor qilish
                     },
                     error: function () {
                         alert('An error occurred while sending the message.');

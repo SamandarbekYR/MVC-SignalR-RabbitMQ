@@ -24,10 +24,7 @@ builder.Services.AddTransient<IUsersMessagesRepository, UsersMessagesRepository>
 builder.Services.AddTransient<IRabbitMQProducerService, RabbitMQProducerService>();
 builder.Services.AddCustomControllers();
 builder.Services.AddSignalR();
-builder.Services.AddSignalR().AddHubOptions<NotificationHub>(options =>
-{
-    options.ClientTimeoutInterval = TimeSpan.FromMinutes(6); // mijoz bilan aloqani yo'qotish uchun vaqt
-});
+
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30); // Session saqlash vaqti

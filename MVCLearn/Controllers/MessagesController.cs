@@ -31,23 +31,23 @@ namespace MVCLearn.Controllers
         [HttpGet]
         public async Task<IActionResult> Boss()
         {
+            //var userId = HttpContext.Session.GetString("UserId");
+
+            //if (userId == null)
+            //{
+            //    return RedirectToAction("Login", "Accaunt");
+            //}
+
             var users = _usersrepository.GetAll().Where(u => u.RoleName == "Worker").ToList();
             return View(users);
         }
         [HttpPost]
-        public async Task<IActionResult> SendMessage([FromBody] SendMessageRequestDto sendMessage)
+        public  IActionResult SendMessage([FromBody] SendMessageRequestDto sendMessage)
         {
             try
             {
                 string jsonMessage = JsonConvert.SerializeObject(sendMessage);
                 _rabbitMQProducer.SendMessage(jsonMessage);
-
-                foreach (var userId in sendMessage.users)
-                {
-                    // Faqat kerakli foydalanuvchiga yuborish
-                    await _hubContext.Clients.Client(userId.Id.ToString())
-                        .SendAsync("ReceiveMessage", sendMessage.messageBody, DateTime.UtcNow.AddHours(5));
-                }
 
                 return RedirectToAction("Boss");
             }
