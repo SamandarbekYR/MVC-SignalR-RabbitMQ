@@ -1,13 +1,11 @@
 ﻿using MVCLearn.DataAcess.Interfaces.Messages;
-using MVCLearn.DataAcess.Interfaces.UsersMessages;
-using RabbitMQ.Client.Events;
-using RabbitMQ.Client;
-using ReceiverApp.WebApi.Interfaces.RabbitMQ;
-using System.Text;
 using MVCLearn.DTOs;
-using Newtonsoft.Json;
-using MVCLearn.Models;
 using MVCLearn.Interfaces.Messages;
+using MVCLearn.Models;
+using Newtonsoft.Json;
+using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
+using System.Text;
 
 namespace ReceiverApp.WebApi.Services.RabbitMQ
 {
@@ -17,10 +15,12 @@ namespace ReceiverApp.WebApi.Services.RabbitMQ
         private readonly IModel _channel;
         private IConnection _connection;
 
-        public RabbitMQConsumerService(IConfiguration config, IServiceProvider serviceProvider)
+        public RabbitMQConsumerService(IConfiguration config,
+                                       IServiceProvider serviceProvider )
+                                      
         {
             _serviceProvider = serviceProvider;
-           // _config = config.GetSection("MessageBroker");
+            // _config = config.GetSection("MessageBroker");
 
             var factory = new ConnectionFactory()
             {
@@ -50,8 +50,7 @@ namespace ReceiverApp.WebApi.Services.RabbitMQ
             {
                 using (var scope = _serviceProvider.CreateScope())
                 {
-                    var usersMessageRepository = scope.ServiceProvider.GetRequiredService<IUsersMessagesRepository>();
-                    var messageRepository = scope.ServiceProvider.GetRequiredService<IMessageRepository>();
+                    var _messageRepository = scope.ServiceProvider.GetRequiredService<IMessageRepository>();
                     var emailSenderService = scope.ServiceProvider.GetRequiredService<IEmailSenderService>();
 
                     var body = ea.Body.ToArray();
@@ -59,33 +58,35 @@ namespace ReceiverApp.WebApi.Services.RabbitMQ
 
                     SendMessageRequestDto dto = JsonConvert.DeserializeObject<SendMessageRequestDto>(messageContent)!;
 
-                    // Xabarni bazaga saqlash
-                    var message = new Message { Content = dto.messageBody, SendAt = DateTime.UtcNow.AddHours(5) };
-                    Guid messageId = await messageRepository.Add(message);
 
-                    foreach (var userId in dto.users)
+                    foreach (var user in dto.users)
                     {
-                        var userMessage = new UserMessage { UserId = userId.Id, MessageId = messageId };
-                        await usersMessageRepository.Add(userMessage);
+                        var message = new Message
+                        {
+                            SenderId = dto.SenderId,
+                            ReceiverId = user.Id,
+                            MessageContent = dto.messageBody,
+                            SendTime = DateTime.UtcNow.AddHours(5),
+                            IsRead = false
+                        };
+
+                        await _messageRepository.Add(message);
 
                         MessageDto messageDto = new()
                         {
                             Title = "Boss's message\n",
                             Body = dto.messageBody,
-                            To = userId.Email
+                            To = user.Email
                         };
                         await emailSenderService.SendEmailAsync(messageDto);
                     }
                 }
-
                 _channel.BasicAck(ea.DeliveryTag, multiple: false);
             };
-
             _channel.BasicConsume(queue: "MessageQueue",
                                   autoAck: false,
                                   consumer: consumer);
         }
-
         public override void Dispose()
         {
             _channel.Close();

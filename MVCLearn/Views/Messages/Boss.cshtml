@@ -2,73 +2,134 @@
 @{
     ViewData["Title"] = "Boss Page";
 }
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
 
-<div class="container mt-5">
-    <div class="row mb-4">
-        <div class="col-md-12 text-center">
-            <label class="display-4" style="font-size: 38px;">Send Message to Worker</label>
+<form>
+    <div class="w-full mb-4 mt-8 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
+        <div class="px-4 py-2 bg-white rounded-t-lg dark:bg-gray-800">
+            <label for="comment" class="sr-only">Your comment</label>
+            <textarea id="commentmessage" rows="4" class="w-full px-0 text-sm text-gray-900 bg-white border-0 dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400" placeholder="Write a message..." required></textarea>
         </div>
-    </div>
-
-    <!-- Message Input -->
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <div class="form-group">
-                <label for="messageInput" class="h5">Message:</label>
-                <textarea id="messageInput" class="form-control form-control-lg" rows="4" placeholder="Type your message here..."></textarea>
+        <div class="flex items-center justify-between px-3 py-2 border-t dark:border-gray-600">
+            <button type="submit" id="sendMessageButton" class="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-blue-700 rounded-lg focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900 hover:bg-blue-800">
+                Send Message  
+            </button>
+            <div class="flex ps-0 space-x-1 rtl:space-x-reverse sm:ps-2">
+                <button type="button" id="viewMessageButton" class="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-blue-700 rounded-lg focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900 hover:bg-blue-800" data-bs-toggle="modal" data-bs-target="#messageModal">
+                    View Message
+                </button>
             </div>
         </div>
     </div>
+</form>
 
-    <!-- Users Table -->
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <table class="table table-striped table-hover table-bordered">
-                <thead class="thead-dark">
-                    <tr>
-                        <th scope="col"><input type="checkbox" id="selectAllCheckbox" /></th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Email</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var user in Model)
-                    {
+<!-- Modal for Viewing Messages -->
+<div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="messageModalLabel">Message Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table" id="messagesTable">
+                    <thead>
                         <tr>
-                            <td><input type="checkbox" class="userCheckbox" data-id="@user.Id" data-email="@user.Gmail" /></td>
-                            <td>@user.Name</td>
-                            <td>@user.Gmail</td>
+                            <th scope="col">Receiver</th>
+                            <th scope="col">Content</th>
+                            <th scope="col">Sent Time</th>
+                            <th scope="col">Read Time</th>
+                            <th scope="col">Status</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- Action Buttons -->
-    <div class="row">
-        <div class="col-md-6">
-            <button id="sendMessageButton" class="btn btn-primary btn-lg btn-block">Send Message</button>
-        </div>
-        <div class="col-md-6">
-            <a href="@Url.Action("SentMessages", "Messages")" class="btn btn-info btn-lg btn-block">View Sent Messages</a>
+                    </thead>
+                    <tbody>
+                        <!-- Message rows will be appended here dynamically -->
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
+<div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+    <div class="flex items-center justify-between flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 pb-4 bg-white dark:bg-gray-900">
+        <div>
+            <!-- Dropdown menu -->
+            <div id="dropdownAction" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
+                <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownActionButton">
+                    <li><a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Reward</a></li>
+                    <li><a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Promote</a></li>
+                    <li><a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Activate account</a></li>
+                </ul>
+                <div class="py-1"><a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Delete User</a></div>
+            </div>
+        </div>
+    </div>
+    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+                <th scope="col" class="p-4">
+                    <div class="flex items-center">
+                        <input id="checkbox-all-search" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                        <label for="checkbox-all-search" class="sr-only">checkbox</label>
+                    </div>
+                </th>
+                <th scope="col" class="px-6 py-3">Name</th>
+                <th scope="col" class="px-6 py-3">Position</th>
+                <th scope="col" class="px-6 py-3">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                    <td class="w-4 p-4">
+                        <div class="flex items-center">
+                            <input type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded userCheckbox focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" data-id="@user.Id" data-email="@user.Gmail">
+                            <label for="checkbox-table-search-@user.Id" class="sr-only">checkbox</label>
+                        </div>
+                    </td>
+                    <th scope="row" class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
+                        <img class="w-10 h-10 rounded-full" src="@(Url.Content("/assets/images/programmisth.jpg"))" alt="@user.FirstName image">
+                        <div class="ps-3">
+                            <div class="text-base font-semibold">@user.FirstName</div>
+                            <div class="font-normal text-gray-500">@user.Gmail</div>
+                        </div>
+                    </th>
+                    <td class="px-6 py-4">@user.Position</td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center">
+                            <div class="h-2.5 w-2.5 rounded-full me-2"></div>
+                            <span class="status-text @(user.IsOnline ? "text-green-500" : "text-red-500")">
+                                @(user.IsOnline ? "Online" : "Offline")
+                            </span>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<link href="~/flowbite/flowbite.css" rel="stylesheet" />
+<link href="~/flowbite/flowbite.min.css" rel="stylesheet" />
+<script src="~/flowbite/flowbite.js"></script>
+<script src="~/flowbite/flowbite.min.js"></script>
+
 <script src="~/js/signalr.js"></script>
 
 @section Scripts {
     <script type="text/javascript">
         $(document).ready(function () {
             // Select All functionality
-            $('#selectAllCheckbox').change(function () {
+            $('#checkbox-all-search').change(function () {
                 $('.userCheckbox').prop('checked', $(this).prop('checked'));
             });
 
             // Send message button click event
-            $('#sendMessageButton').click(function () {
+            $('#sendMessageButton').click(function (e) {
+                e.preventDefault();
+
                 var selectedUsers = [];
                 $('.userCheckbox:checked').each(function () {
                     selectedUsers.push({
@@ -77,33 +138,86 @@
                     });
                 });
 
-                var message = $('#messageInput').val();
+                var message = $('#commentmessage').val().trim();
 
-                if (selectedUsers.length === 0 || message.trim() === '') {
-                    // Modal yoki alert orqali xabar berish
-                    alert('Please select at least one user and enter a message.');
-                    return;
+                if (selectedUsers.length === 0) {
+                    alert('Please select at least one user.');
+                    return; // Agar hech qanday foydalanuvchi tanlanmagan bo'lsa, funksiya shu yerda tugaydi.
                 }
 
+                if (message === '') {
+                    alert('Please enter a message.');
+                    return; // Agar xabar matni bo'sh bo'lsa, funksiya shu yerda tugaydi.
+                }
+
+                // Ajax orqali xabar yuborish
                 $.ajax({
                     type: "POST",
-                    url: '@Url.Action("SendMessage", "Messages")',  // URL to send the AJAX request to
-                    contentType: "application/json",  // Set the content type to JSON
+                    url: '@Url.Action("SendMessage", "Messages")',
+                    contentType: "application/json",
                     data: JSON.stringify({
-                        messageBody: message,  // The message to send
-                        users: selectedUsers   // The selected users
+                        messageBody: message,
+                        users: selectedUsers
                     }),
                     success: function () {
                         alert('Message sent successfully!');
-                        $('#messageInput').val('');
                         $('.userCheckbox').prop('checked', false);
-                        $('#selectAllCheckbox').prop('checked', false); // "Select All" checkboxini bekor qilish
+                        $('#commentmessage').val('');
                     },
-                    error: function () {
-                        alert('An error occurred while sending the message.');
+                    error: function (xhr, status, error) {
+                        console.error(error);
                     }
                 });
             });
+
+            // View message button click event
+            $('#viewMessageButton').click(function () {
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("GetMessages", "Messages")',
+                    contentType: "application/json",
+                    success: function (response) {
+                        var tableBody = $('#messagesTable tbody');
+                        tableBody.empty();
+
+                        // Javob mavjudligini tekshiramiz
+                        if (response && Array.isArray(response)) {
+                            response.forEach(function (message) {
+                                if (message) { // 'message' obyektini tekshiramiz
+                                    var readTime = message.readTime ? new Date(message.readTime).toLocaleString() : 'null';
+                                    var readStatus = message.readStatus ? 'Read' : 'Not Read';
+
+                                    tableBody.append(
+                                        '<tr>' +
+                                        '<td>' + (message.receiverName || 'Noma\'lum') + '</td>' +
+                                        '<td>' + (message.content || 'Mazmun mavjud emas') + '</td>' +
+                                        '<td>' + (new Date(message.sentTime).toLocaleString() || 'null') + '</td>' +
+                                        '<td>' + readTime + '</td>' +
+                                        '<td>' + readStatus + '</td>' +
+                                        '</tr>'
+                                    );
+                                } else {
+                                    console.warn('Received null or undefined message object.');
+                                }
+                            });
+                        } else {
+                            console.warn('Response is null or not an array.');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(error);
+                    }
+                });
+            });
+
+            // const connection = new signalR.HubConnectionBuilder().withUrl("/notificationHub").build();
+
+            // connection.on("ReceiveMessage", function (message) {
+            //     $('#messagesTable tbody').append('<tr><td>' + message.receiverName + '</td><td>' + message.content + '</td><td>' + new Date(message.sentTime).toLocaleString() + '</td><td>' + (message.readTime ? new Date(message.readTime).toLocaleString() : 'Unread') + '</td><td>' + (message.readTime ? 'Read' : 'Unread') + '</td></tr>');
+            // });
+            // connection.start().catch(function (err) {
+            //     return console.error(err.toString());
+            // });
         });
     </script>
 }

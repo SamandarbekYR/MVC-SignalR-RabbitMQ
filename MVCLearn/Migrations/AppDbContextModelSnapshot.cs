@@ -29,14 +29,24 @@ namespace MVCLearn.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("content");
+                    b.Property<bool?>("IsRead")
+                        .HasColumnType("boolean");
 
-                    b.Property<DateTime>("SendAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("send_at");
+                    b.Property<string>("MessageContent")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ReadTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("ReceiverId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("SendTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("SenderId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -50,77 +60,28 @@ namespace MVCLearn.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Gmail")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("gmail");
+                        .HasColumnType("text");
 
-                    b.Property<string>("Name")
+                    b.Property<bool>("IsOnline")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Position")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("name");
+                        .HasColumnType("text");
 
                     b.Property<string>("RoleName")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("role_name");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
                     b.ToTable("user");
-                });
-
-            modelBuilder.Entity("MVCLearn.Models.UserMessage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<Guid>("MessageId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("message_id");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("user_id");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MessageId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("users_messages");
-                });
-
-            modelBuilder.Entity("MVCLearn.Models.UserMessage", b =>
-                {
-                    b.HasOne("MVCLearn.Models.Message", "Message")
-                        .WithMany("UserMessages")
-                        .HasForeignKey("MessageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MVCLearn.Models.User", "User")
-                        .WithMany("UserMessages")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Message");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("MVCLearn.Models.Message", b =>
-                {
-                    b.Navigation("UserMessages");
-                });
-
-            modelBuilder.Entity("MVCLearn.Models.User", b =>
-                {
-                    b.Navigation("UserMessages");
                 });
 #pragma warning restore 612, 618
         }

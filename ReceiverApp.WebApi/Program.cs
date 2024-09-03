@@ -1,18 +1,14 @@
 using MVCLearn.Configurations;
 using MVCLearn.DataAcess.Interfaces.Messages;
-using MVCLearn.DataAcess.Interfaces.UsersMessages;
 using MVCLearn.DataAcess.Repositories.Messages;
-using MVCLearn.DataAcess.Repositories.UsersMessages;
 using MVCLearn.Interfaces.Messages;
 using MVCLearn.Models;
 using MVCLearn.Services.Messages;
 using MVCLearn.Services.RabbitMQ;
-using ReceiverApp.WebApi.Interfaces.RabbitMQ;
 using ReceiverApp.WebApi.Services.RabbitMQ;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddTransient<IUsersMessagesRepository , UsersMessagesRepository>();
 builder.Services.AddTransient<IMessageRepository, MessageRepository>();
 builder.Services.AddTransient<IEmailSenderService, EmailSenderService>();
 builder.Services.AddHostedService<RabbitMQConsumerService>();
