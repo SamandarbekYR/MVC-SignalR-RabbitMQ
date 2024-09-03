@@ -5,12 +5,10 @@ namespace MVCLearn.Models
     [Table("user")]
     public class User : BaseEntity
     {
-        [Column("role_name")]
+        public string FirstName { get; set; } = string.Empty;
         public string RoleName { get; set; } = string.Empty;
-        [Column("name")]
-        public string Name { get; set; } = string.Empty;
-        [Column("gmail")]
+        public string Position { get; set; } = string.Empty;
         public string Gmail { get; set; } = string.Empty;
-        public List<UserMessage> UserMessages { get; set; }
+        public bool IsOnline { get; set; }
     }
 }

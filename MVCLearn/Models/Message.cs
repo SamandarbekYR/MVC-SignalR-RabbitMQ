@@ -5,10 +5,11 @@ namespace MVCLearn.Models
     [Table("message")]
     public class Message : BaseEntity
     {
-        [Column("content")]
-        public string Content { get; set; } = string.Empty;
-        [Column("send_at")]
-        public DateTime SendAt { get; set; } = DateTime.UtcNow.AddHours(5);
-        public List<UserMessage> UserMessages { get; set; }
+        public Guid SenderId { get; set; }
+        public Guid ReceiverId { get; set; }
+        public string MessageContent { get; set; } = string.Empty;
+        public DateTime SendTime { get; set; }
+        public DateTime? ReadTime { get; set; }
+        public bool? IsRead { get; set; }
     }
 }

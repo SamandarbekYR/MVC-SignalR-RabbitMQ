@@ -31,6 +31,7 @@ namespace MVCLearn.Controllers
             HttpContext.Session.SetString("UserGmail", user.Gmail);
             if (user.RoleName == "Boss")
             {
+                HttpContext.Session.SetString("BossId", user.Id.ToString());
                 return RedirectToAction("Boss", "Messages");
             }
 

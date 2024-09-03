@@ -19,21 +19,13 @@
 	<!--===============================================================================================-->
 	@* 	<link rel="icon" type="image/png" href="images/icons/favicon.ico" /> *@
 
-	<link href="~/login/images/icons/favicon.ico" />
-	<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
-	<link href="~/login/vendor/bootstrap/css/._bootstrap.min.css" rel="stylesheet" />
-	<!--===============================================================================================-->
-	<link href="~/login/fonts/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet">
-	<!--===============================================================================================-->
-	<link rel="stylesheet" href="~/login/vendor/animate/animate.css">
-	<!--===============================================================================================-->
-	<link rel="stylesheet" href="~/login/vendor/css-hamburgers/hamburgers.min.css">
-	<!--===============================================================================================-->
-	<link rel="stylesheet" href="~/login/vendor/select2/select2.min.css">
-	<!--===============================================================================================-->
-	<link rel="stylesheet" href="~/login/css/util.css">
-	<link rel="stylesheet" href="~/login/css/main.css">
+	<link rel="stylesheet" href="@Url.Content("~/login/vendor/bootstrap/css/bootstrap.min.css")">
+	<link rel="stylesheet" href="@Url.Content("~/login/fonts/font-awesome-4.7.0/css/font-awesome.min.css")">
+	<link rel="stylesheet" href="@Url.Content("~/login/vendor/animate/animate.css")">
+	<link rel="stylesheet" href="@Url.Content("~/login/vendor/css-hamburgers/hamburgers.min.css")">
+	<link rel="stylesheet" href="@Url.Content("~/login/vendor/select2/select2.min.css")">
+	<link rel="stylesheet" href="@Url.Content("~/login/css/util.css")">
+	<link rel="stylesheet" href="@Url.Content("~/login/css/main.css")">
 	<!--===============================================================================================-->
 </head>
 <body>
@@ -76,16 +68,12 @@
 
 
 
-
-	<!--===============================================================================================-->
-	<script src="~/login/vendor/jquery/jquery-3.2.1.min.js"></script>
-	<!--===============================================================================================-->
-	<script src="~/login/vendor/bootstrap/js/popper.js"></script>
-	<script src="~/login/vendor/bootstrap/js/bootstrap.min.js"></script>
-	<!--===============================================================================================-->
-	<script src="~/login/vendor/select2/select2.min.js"></script>
-	<!--===============================================================================================-->
-	<script src="~/login/vendor/tilt/tilt.jquery.min.js"></script>
+    <script src="~/lib/jquery/jquery.js"></script>
+    <script src="~/lib/jquery/jquery.min.js"></script>
+    <script src="~/lib/jquery/jquery.slim.js"></script>
+    <script src="~/lib/jquery/jquery.slim.min.js"></script>
+    <script src="~/lib/tilt.js/tilt.jquery.js"></script>
+    <script src="~/lib/tilt.js/tilt.jquery.min.js"></script>
 	<script>
 		$('.js-tilt').tilt({
 			scale: 1.1

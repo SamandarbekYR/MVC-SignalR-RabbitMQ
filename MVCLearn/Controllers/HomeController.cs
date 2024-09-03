@@ -4,7 +4,7 @@ namespace YourNamespace.Controllers
 {
 	public class HomeController : Controller
 	{
-		public IActionResult Login()
+		public IActionResult Index()
 		{
 			return View();
 		}

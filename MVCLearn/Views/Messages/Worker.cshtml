@@ -1,4 +1,4 @@
-﻿@model List<MVCLearn.Models.UserMessage>
+﻿@model List<MVCLearn.Models.Message>
 
 <!-- Bootstrap CSS -->
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
@@ -33,11 +33,20 @@
                         </tr>
                     </thead>
                     <tbody id="notificationsTable">
-                        @foreach (var userMessage in Model)
+                        @if (Model != null && Model.Any())
+                        {
+                            @foreach (var userMessage in Model)
+                            {
+                                <tr>
+                                    <td>@userMessage.SendTime</td>
+                                    <td>@userMessage.MessageContent</td>
+                                </tr>
+                            }
+                        }
+                        else
                         {
                             <tr>
-                                <td>@userMessage.Message.SendAt</td>
-                                <td>@userMessage.Message.Content</td>
+                                <td colspan="2" class="text-center">No notifications available.</td>
                             </tr>
                         }
                     </tbody>

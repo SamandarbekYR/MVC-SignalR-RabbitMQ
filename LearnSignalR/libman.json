@@ -9,6 +9,10 @@
     {
       "library": "aspnet-signalr@1.0.27",
       "destination": "wwwroot/aspnet-signalr/"
+    },
+    {
+      "library": "flowbite@2.5.1",
+      "destination": "wwwroot/lib/flowbite/"
     }
   ]
 }
