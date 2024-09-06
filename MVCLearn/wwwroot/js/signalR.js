@@ -29,25 +29,71 @@ connection.on("UpdateUserStatus", (email, isOnline) => {
         }
     }
 });
-
-
 document.getElementById("sendMessageButton").addEventListener("click", async function (event) {
     event.preventDefault();
 
+    document.getElementById("sendMessageButton").style.display = "none";
+    document.getElementById("loadingButton").style.display = "inline-flex";
+
+
     const message = document.getElementById("commentmessage").value;
     const selectedUsers = getSelectedUserEmails();
-    try {
-        await connection.invoke("SendMessageToSelectedUsers", selectedUsers, message);
-        console.log("Message sent successfully.");
-        alert('Message sent successfully!');
-        document.getElementById("commentmessage").value = '';
-    } catch (err) {
-        console.error("Error sending message: ", err);
-        alert('An error occurred while sending the message.');
+    let totalSuccess = 0;
+    let totalFailure = 0;
+    let divSuccessCount = document.getElementById('divsuccessfullMessageCount');
+    divSuccessCount.textContent = `Successfully sent ${totalSuccess} ...`;
+    let divFailedMessageCount = document.getElementById('divFailedMessageCount');
+    divFailedMessageCount.textContent = `Failed to send: ${totalFailure}`;
+    let divWhoMessageIsSending = document.getElementById('divWhoMessageisSending');
+ 
+    let i = 0;
+
+    function sendNextMessage() {
+        if (i >= selectedUsers.length) {
+            alert('Message sending process completed!');
+            document.getElementById("commentmessage").value = '';
+
+            document.getElementById("loadingButton").style.display = "none";
+            document.getElementById("sendMessageButton").style.display = "inline-flex";
+
+            setTimeout(function () {
+                document.getElementById('divtoastr').style.display = 'none';
+            }, 3000);
+
+            return;
+        }
+
+        divWhoMessageIsSending.textContent = `Starting to send messages to ${selectedUsers[i]}`;
+
+        connection.invoke("SendMessageToSelectedUsers", selectedUsers[i], message)
+            .then(() => {
+                totalSuccess++;
+                divSuccessCount.textContent = `Successfully sent to ${totalSuccess} ...`;
+                divWhoMessageIsSending.textContent = `Message sent to ${selectedUsers[i]} successfully`
+            })
+            .catch((err) => {
+                console.error("Error sending message: ", err);
+                alert('An error occurred while sending the message.');
+                totalFailure++;
+                divFailedMessageCount.textContent = `Failed to send: ${totalFailure}`;
+            })
+            .finally(() => {
+                i++;
+                document.getElementById('divtoastr').style.display = 'block';
+                setTimeout(sendNextMessage, 3000);
+            });
     }
+
+    sendNextMessage();
 });
 
 function getSelectedUserEmails() {
     const checkboxes = document.querySelectorAll(".userCheckbox:checked");
     return Array.from(checkboxes).map(checkbox => checkbox.dataset.email);
 }
+
+document.getElementById("viewMessageButton").addEventListener("click", async function (event) {
+    event.preventDefault();
+
+    document.getElementById("messageModal").style.display = 'block';
+})
