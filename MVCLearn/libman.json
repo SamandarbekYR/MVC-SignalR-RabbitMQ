@@ -11,16 +11,16 @@
       "destination": "wwwroot/aspnet-signalr/"
     },
     {
-      "library": "jquery@3.7.1",
-      "destination": "wwwroot/lib/jquery/"
-    },
-    {
       "library": "tilt.js@1.2.1",
       "destination": "wwwroot/lib/tilt.js/"
     },
     {
       "library": "flowbite@2.5.1",
       "destination": "wwwroot/flowbite/"
+    },
+    {
+      "library": "jquery@3.7.1",
+      "destination": "wwwroot/jquery/"
     }
   ]
 }

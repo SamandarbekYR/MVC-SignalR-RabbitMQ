@@ -51,11 +51,11 @@ namespace MVCLearn.Controllers
                 string jsonMessage = JsonConvert.SerializeObject(sendMessage);
                 _rabbitMQProducer.SendMessage(jsonMessage);
 
-                return RedirectToAction("Boss");
+                return RedirectToAction("Boss", "Messages");
             }
             catch
             {
-                return View();
+                return RedirectToAction("Boss");
             }
         }
         [HttpGet]

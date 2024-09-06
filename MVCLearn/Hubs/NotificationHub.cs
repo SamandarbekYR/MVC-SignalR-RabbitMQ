@@ -12,7 +12,7 @@ namespace MVCLearn.Hubs
         private IUserRepository _userRepository;
         private IMessageRepository _message;
 
-        public NotificationHub(IUserRepository userRepository, 
+        public NotificationHub(IUserRepository userRepository,
                                IMessageRepository message)
         {
             _userRepository = userRepository;
@@ -47,21 +47,19 @@ namespace MVCLearn.Hubs
 
             await base.OnDisconnectedAsync(exception);
         }
-        public async Task SendMessageToSelectedUsers(string[] userEmails, string message)
+        public async Task SendMessageToSelectedUsers(string userEmails, string message)
         {
-            foreach (var email in userEmails)
+            var connectionId = _connection.FirstOrDefault(x => x.Value == userEmails).Key;
+           
+            if (connectionId != null)
             {
-                var connectionId = _connection.FirstOrDefault(x => x.Value == email).Key;
-                if (connectionId != null)
-                {
-                    await Clients.Client(connectionId).SendAsync("ReceiveMessage", message);
-                }
+                await Clients.Client(connectionId).SendAsync("ReceiveMessage", message);
             }
         }
         public async Task UpdateMessageStatus(Guid messageId, bool isRead)
         {
             var message = await _message.UpdateMessageStatus(messageId, isRead);
-            if(message != null)
+            if (message != null)
             {
                 var user = await _userRepository.GetById(message.ReceiverId);
                 MessageView messageView = new MessageView();
